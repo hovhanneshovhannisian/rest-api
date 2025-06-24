@@ -51,10 +51,10 @@ func InitDB() {
 func createTabel() {
 	// Users table
 	createUserTable := `
-	CREATE TABLE users (
+	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL,
-		email TEXT NOT NULL,
+		email TEXT,
 		password TEXT NOT NULL
 	);`
 	_, err := DB.Exec(createUserTable)
@@ -64,7 +64,7 @@ func createTabel() {
 
 	// Posts table
 	createPostsTable := `
-	CREATE TABLE posts (
+	CREATE TABLE IF NOT EXISTS posts (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
@@ -80,7 +80,7 @@ func createTabel() {
 
 	// Comments table
 	createCommentsTable := `
-	CREATE TABLE comments (
+	CREATE TABLE IF NOT EXISTS comments (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		post_id INTEGER NOT NULL,
 		author_id INTEGER NOT NULL,

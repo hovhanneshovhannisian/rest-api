@@ -1,6 +1,6 @@
-package modelsss
+package models
 
-import "example.com/rest-api/db"
+import "example/blog/db"
 
 type Comment struct {
 	ID       int64

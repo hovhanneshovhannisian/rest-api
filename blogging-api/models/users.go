@@ -1,14 +1,16 @@
-package modelsss
+package models
 
 import (
-	"example.com/rest-api/db"
-	"example.com/rest-api/helper"
+	"errors"
+	"example/blog/helper"
+
+	"example/blog/db"
 )
 
 type User struct {
 	ID       int64
 	Username string `binding:"required"`
-	Email    string `binding:"required"`
+	Email    string
 	Password string `binding:"required"`
 }
 
@@ -29,6 +31,20 @@ func (u *User) Save() error {
 	u.ID = id
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (u *User) ValidateCredentials() error {
+	query := `SELECT id, password FROM users
+	WHERE (username = ?)`
+	row := db.DB.QueryRow(query, u.Username)
+	var hashedPassword string
+	if err := row.Scan(&u.ID, &hashedPassword); err != nil {
+		return err
+	}
+	if ok := helper.VerifyPassword(u.Password, hashedPassword); !ok {
+		return errors.New("invalid credentials")
 	}
 	return nil
 }
