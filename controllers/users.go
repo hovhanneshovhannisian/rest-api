@@ -23,7 +23,7 @@ func Signup(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusCreated, gin.H{
-		"message": "user has been created",
+		"message": "user has  created",
 	})
 }
 
