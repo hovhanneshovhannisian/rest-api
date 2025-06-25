@@ -16,6 +16,12 @@ func SignUp(ctx *gin.Context) {
 		})
 		return
 	}
+	if isExist := newUser.IsExist(); isExist {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "user already exists",
+		})
+		return
+	}
 	if err := newUser.Save(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "server error",

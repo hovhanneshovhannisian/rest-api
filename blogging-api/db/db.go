@@ -53,7 +53,7 @@ func createTabel() {
 	createUserTable := `
 	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username TEXT NOT NULL,
+		username TEXT NOT NULL UNIQUE,
 		email TEXT,
 		password TEXT NOT NULL
 	);`
@@ -73,6 +73,23 @@ func createTabel() {
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY (author_id) REFERENCES users(id)
 	);`
+
+	//	TODO
+	//	after implementing the mysql not sqlite change the
+	// 	table creation query to this to work update_at time
+	// 	setting automaticlly sqlite dot not support this query
+	//
+	//
+	// `CREATE TABLE IF NOT EXISTS posts (
+	// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	// 	title TEXT NOT NULL,
+	// 	content TEXT NOT NULL,
+	// 	author_id INTEGER NOT NULL,
+	// 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	// 	// updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, //
+	// 	FOREIGN KEY (author_id) REFERENCES users(id)
+	// );`
+
 	_, err = DB.Exec(createPostsTable)
 	if err != nil {
 		panic("couldn't create posts table")

@@ -2,13 +2,16 @@ package models
 
 import (
 	"example/blog/db"
+	"time"
 )
 
 type Post struct {
-	ID       int64
-	Title    string `binding:"required"`
-	Content  string `binding:"required"`
-	AuthorID int64
+	ID        int64
+	Title     string `binding:"required"`
+	Content   string `binding:"required"`
+	AuthorID  int64
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (p *Post) Save() error {
@@ -44,6 +47,17 @@ func (p Post) Updated() error {
 
 }
 
+func (p Post) Delete() error {
+	query := "DELETE FROM posts WHERE id = ?"
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(p.ID)
+	return err
+}
+
 func GetPosts() ([]Post, error) {
 	query := "SELECT * FROM posts"
 	rows, err := db.DB.Query(query)
@@ -54,7 +68,8 @@ func GetPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.AuthorID); err != nil {
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.AuthorID, &post.CreatedAt, &post.UpdatedAt)
+		if err != nil {
 			return nil, err
 		}
 		posts = append(posts, post)
@@ -66,7 +81,7 @@ func GetPostByID(id int64) (*Post, error) {
 	query := `SELECT * FROM posts WHERE (id = ?)`
 	result := db.DB.QueryRow(query, id)
 	var post Post
-	err := result.Scan(&post.ID, &post.Title, &post.Content, &post.AuthorID)
+	err := result.Scan(&post.ID, &post.Title, &post.Content, &post.AuthorID, &post.CreatedAt, &post.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}

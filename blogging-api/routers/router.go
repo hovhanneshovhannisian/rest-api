@@ -10,8 +10,15 @@ import (
 func Router(server *gin.Engine) {
 	server.GET("/posts", controllers.GetAllPosts)
 	server.GET("/posts/:id", controllers.GetPost)
-	server.POST("/posts", middlewares.Authentication, controllers.CreatePost)
-	server.PUT("/posts/:id", middlewares.Authentication, controllers.UpdatePost)
+
+	authentication := server.Group("/posts")
+	authentication.Use(middlewares.Authentication)
+	authentication.POST("/", controllers.CreatePost)
+	authentication.POST("/:id/comment", controllers.CreateComment)
+	authentication.PUT("/:id", controllers.UpdatePost)
+	authentication.DELETE("/:id", controllers.DeletePost)
+
+	server.GET("/comments", controllers.ToTestComments)
 
 	server.POST("/signup", controllers.SignUp)
 	server.POST("/login", controllers.Login)

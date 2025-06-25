@@ -72,15 +72,15 @@ func UpdatePost(ctx *gin.Context) {
 	}
 	authorID := ctx.GetInt64("authorID")
 	post, err := models.GetPostByID(cnvtID)
-	if post.AuthorID != authorID {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"message": "unauthorized user",
-		})
-		return
-	}
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "post not found",
+		})
+		return
+	}
+	if post.AuthorID != authorID {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized user",
 		})
 		return
 	}
@@ -103,5 +103,39 @@ func UpdatePost(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "post updated!",
 		"data":    updatingPost,
+	})
+}
+
+func DeletePost(ctx *gin.Context) {
+	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	authorID := ctx.GetInt64("authorID")
+	post, err := models.GetPostByID(cnvtID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "post not found",
+		})
+		return
+	}
+	if post.AuthorID != authorID {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized user",
+		})
+		return
+	}
+	err = post.Delete()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "post deleted!",
 	})
 }

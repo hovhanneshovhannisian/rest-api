@@ -48,3 +48,13 @@ func (u *User) ValidateCredentials() error {
 	}
 	return nil
 }
+
+func (u User) IsExist() bool {
+	query := `SELECT id FROM users WHERE (username = ?)`
+	row := db.DB.QueryRow(query, u.Username)
+	var id int64
+	if err := row.Scan(&id); err != nil {
+		return false
+	}
+	return true
+}
