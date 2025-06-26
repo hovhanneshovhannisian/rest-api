@@ -2,13 +2,16 @@ package models
 
 import (
 	"example/blog/db"
+	"time"
 )
 
 type Comment struct {
-	ID       int64
-	PostID   int64
-	AuthorID int64
-	Content  string `binding:"required"`
+	ID        int64
+	PostID    int64
+	AuthorID  int64
+	Content   string `binding:"required"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (c Comment) Save() error {
@@ -39,9 +42,11 @@ func GetComments(postID int64) ([]Comment, error) {
 	var comments []Comment
 	for rows.Next() {
 		var comment Comment
-		if err := rows.Scan(); err != nil {
+		err := rows.Scan(&comment.ID, &comment.PostID, &comment.AuthorID, &comment.Content, &comment.CreatedAt, &comment.UpdatedAt)
+		if err != nil {
 			return nil, err
 		}
 		comments = append(comments, comment)
 	}
+	return comments, nil
 }

@@ -61,7 +61,16 @@ func GetPostComments(ctx *gin.Context) {
 		})
 		return
 	}
-
+	cmnts, err := models.GetComments(cnvtID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "comment not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": cmnts,
+	})
 }
 
 // to be removed

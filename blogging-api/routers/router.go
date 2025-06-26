@@ -15,6 +15,7 @@ func Router(server *gin.Engine) {
 	authentication.Use(middlewares.Authentication)
 	authentication.POST("/", controllers.CreatePost)
 	authentication.POST("/:id/comment", controllers.CreateComment)
+	authentication.GET("/:id/comment", controllers.GetPostComments)
 	authentication.PUT("/:id", controllers.UpdatePost)
 	authentication.DELETE("/:id", controllers.DeletePost)
 
