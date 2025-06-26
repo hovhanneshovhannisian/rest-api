@@ -46,6 +46,25 @@ func CreateComment(ctx *gin.Context) {
 	})
 }
 
+func GetPostComments(ctx *gin.Context) {
+	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	_, err = models.GetPostByID(cnvtID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "post not found",
+		})
+		return
+	}
+
+}
+
+// to be removed
 func ToTestComments(ctx *gin.Context) {
 
 	query := "SELECT id, post_id, author_id, content FROM comments"

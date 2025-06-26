@@ -1,6 +1,8 @@
 package models
 
-import "example/blog/db"
+import (
+	"example/blog/db"
+)
 
 type Comment struct {
 	ID       int64
@@ -24,4 +26,22 @@ func (c Comment) Save() error {
 		return err
 	}
 	return nil
+}
+
+func GetComments(postID int64) ([]Comment, error) {
+	qurey := `SELECT * FROM comments
+	 WHERE (post_id = ?)`
+	rows, err := db.DB.Query(qurey, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var comments []Comment
+	for rows.Next() {
+		var comment Comment
+		if err := rows.Scan(); err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
 }
