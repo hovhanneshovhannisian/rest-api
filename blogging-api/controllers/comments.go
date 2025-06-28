@@ -46,6 +46,82 @@ func CreateComment(ctx *gin.Context) {
 	})
 }
 
+func UpdateComment(ctx *gin.Context) {
+	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	cmnt, err := models.GetCommentByID(cnvtID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "comment not found",
+		})
+		return
+	}
+	authorID := ctx.GetInt64("authorID")
+	if cmnt.AuthorID != authorID {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized user",
+		})
+		return
+	}
+	var updatedComment models.Comment
+	if err := ctx.BindJSON(&updatedComment); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "missing parameters",
+		})
+		return
+	}
+	updatedComment.AuthorID = authorID
+	updatedComment.PostID = cmnt.PostID
+	if err := updatedComment.Update(); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "comment updated!",
+	})
+}
+
+func DeleteComment(ctx *gin.Context) {
+	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	cmnt, err := models.GetCommentByID(cnvtID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "comment not found",
+		})
+		return
+	}
+	authorID := ctx.GetInt64("authorID")
+	if cmnt.AuthorID != authorID {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized user",
+		})
+		return
+	}
+	err = cmnt.Delete()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "comment deleted!",
+	})
+}
+
 func GetPostComments(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {

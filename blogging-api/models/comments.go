@@ -30,6 +30,28 @@ func (c Comment) Save() error {
 	}
 	return nil
 }
+func (c Comment) Update() error {
+	query := `
+	UPDATE comments
+	SET content = ?, updated_at = CURRENT_TIMESTAMP
+	WHERE (id = ?)`
+	_, err := db.DB.Exec(query, c.Content, c.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c Comment) Delete() error {
+	query := "DELETE FROM comments WHERE id = ?"
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(c.ID)
+	return err
+}
 
 func GetComments(postID int64) ([]Comment, error) {
 	qurey := `SELECT * FROM comments
@@ -49,4 +71,15 @@ func GetComments(postID int64) ([]Comment, error) {
 		comments = append(comments, comment)
 	}
 	return comments, nil
+}
+
+func GetCommentByID(id int64) (*Comment, error) {
+	query := `SELECT * FROM comments WHERE (id = ?)`
+	result := db.DB.QueryRow(query, id)
+	var comment Comment
+	err := result.Scan(&comment.ID, &comment.PostID, &comment.AuthorID, &comment.Content, &comment.CreatedAt, &comment.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &comment, nil
 }

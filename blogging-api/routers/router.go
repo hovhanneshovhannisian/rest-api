@@ -13,13 +13,18 @@ func Router(server *gin.Engine) {
 
 	authentication := server.Group("/posts")
 	authentication.Use(middlewares.Authentication)
+
 	authentication.POST("/", controllers.CreatePost)
-	authentication.POST("/:id/comment", controllers.CreateComment)
-	authentication.GET("/:id/comment", controllers.GetPostComments)
 	authentication.PUT("/:id", controllers.UpdatePost)
 	authentication.DELETE("/:id", controllers.DeletePost)
 
-	server.GET("/comments", controllers.ToTestComments)
+	authentication.POST("/:id/comment", controllers.CreateComment)
+	authentication.GET("/:id/comment", controllers.GetPostComments)
+
+	authentication.PUT("/comment/:id", controllers.UpdateComment)
+	authentication.DELETE("/comment/:id", controllers.DeleteComment)
+
+	//server.GET("/comments", controllers.ToTestComments)
 
 	server.POST("/signup", controllers.SignUp)
 	server.POST("/login", controllers.Login)
