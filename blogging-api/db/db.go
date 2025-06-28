@@ -2,18 +2,35 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+	"os"
 
-	_ "modernc.org/sqlite"
+	"github.com/go-sql-driver/mysql"
 )
 
 var DB *sql.DB
 
 func InitDB() {
+	cfg := mysql.NewConfig()
+	cfg.User = os.Getenv("DBUSER")
+	cfg.Passwd = os.Getenv("DBPASS")
+	cfg.Net = "tcp"
+	cfg.Addr = "127.0.0.1:3306"
+	cfg.DBName = "blogging"
+	cfg.ParseTime = true
+
 	var err error
-	DB, err = sql.Open("sqlite", "blog.db")
+	DB, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
-		panic("Could not connect to database.")
+		log.Fatal(err)
 	}
+
+	pingErr := DB.Ping()
+	if pingErr != nil {
+		log.Fatal(pingErr)
+	}
+	fmt.Println("Connected!")
 
 	DB.SetMaxOpenConns(10)
 	DB.SetMaxIdleConns(5)
@@ -21,41 +38,14 @@ func InitDB() {
 	createTabel()
 }
 
-// func InitDB() {
-// 	cfg := mysql.NewConfig()
-// 	cfg.User = os.Getenv("DBUSER")
-// 	cfg.Passwd = os.Getenv("DBPASS")
-// 	cfg.Net = "tcp"
-// 	cfg.Addr = "127.0.0.1:3306"
-// 	cfg.DBName = "recordings"
-
-// 	// Get a database handle.
-// 	var err error
-// 	DB, err = sql.Open("mysql", cfg.FormatDSN())
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	pingErr := DB.Ping()
-// 	if pingErr != nil {
-// 		log.Fatal(pingErr)
-// 	}
-// 	fmt.Println("Connected!")
-
-// 	DB.SetMaxOpenConns(10)
-// 	DB.SetMaxIdleConns(5)
-
-// 	createTabel()
-// }
-
 func createTabel() {
 	// Users table
 	createUserTable := `
 	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username TEXT NOT NULL UNIQUE,
-		email TEXT,
-		password TEXT NOT NULL
+		id INT PRIMARY KEY AUTO_INCREMENT,
+		username VARCHAR(255) NOT NULL UNIQUE,
+		email VARCHAR(255),
+		password VARCHAR(255) NOT NULL
 	);`
 	_, err := DB.Exec(createUserTable)
 	if err != nil {
@@ -65,31 +55,14 @@ func createTabel() {
 	// Posts table
 	createPostsTable := `
 	CREATE TABLE IF NOT EXISTS posts (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		content TEXT NOT NULL,
-		author_id INTEGER NOT NULL,
+		id INT PRIMARY KEY AUTO_INCREMENT,
+		title VARCHAR(255) NOT NULL,
+		content VARCHAR(255) NOT NULL,
+		author_id INT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		FOREIGN KEY (author_id) REFERENCES users(id)
 	);`
-
-	//	TODO
-	//	after implementing the mysql not sqlite change the
-	// 	table creation query to this to work update_at time
-	// 	setting automaticlly sqlite dot not support this query
-	//
-	//
-	// `CREATE TABLE IF NOT EXISTS posts (
-	// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	// 	title TEXT NOT NULL,
-	// 	content TEXT NOT NULL,
-	// 	author_id INTEGER NOT NULL,
-	// 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	// 	// updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, //
-	// 	FOREIGN KEY (author_id) REFERENCES users(id)
-	// );`
-
 	_, err = DB.Exec(createPostsTable)
 	if err != nil {
 		panic("couldn't create posts table")
@@ -98,12 +71,12 @@ func createTabel() {
 	// Comments table
 	createCommentsTable := `
 	CREATE TABLE IF NOT EXISTS comments (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		post_id INTEGER NOT NULL,
-		author_id INTEGER NOT NULL,
-		content TEXT NOT NULL,
+		id INT PRIMARY KEY AUTO_INCREMENT,
+		post_id INT NOT NULL,
+		author_id INT NOT NULL,
+		content VARCHAR(255) NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		FOREIGN KEY (post_id) REFERENCES posts(id),
 		FOREIGN KEY (author_id) REFERENCES users(id)
 	)`

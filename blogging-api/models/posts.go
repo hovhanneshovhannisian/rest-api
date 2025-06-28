@@ -35,7 +35,7 @@ func (p *Post) Save() error {
 func (p Post) Updated() error {
 	query := `
 	UPDATE posts
-	SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP
+	SET title = ?, content = ?
 	WHERE (id = ?)`
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {

@@ -33,7 +33,7 @@ func (c Comment) Save() error {
 func (c Comment) Update() error {
 	query := `
 	UPDATE comments
-	SET content = ?, updated_at = CURRENT_TIMESTAMP
+	SET content = ?
 	WHERE (id = ?)`
 	_, err := db.DB.Exec(query, c.Content, c.ID)
 	if err != nil {
