@@ -75,8 +75,7 @@ func UpdateComment(ctx *gin.Context) {
 		})
 		return
 	}
-	updatedComment.AuthorID = authorID
-	updatedComment.PostID = cmnt.PostID
+	updatedComment.ID = cmnt.ID
 	if err := updatedComment.Update(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "server error",
@@ -137,7 +136,7 @@ func GetPostComments(ctx *gin.Context) {
 		})
 		return
 	}
-	cmnts, err := models.GetComments(cnvtID)
+	cmnts, err := models.GetCommentsByPostID(cnvtID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "comment not found",

@@ -53,7 +53,7 @@ func (c Comment) Delete() error {
 	return err
 }
 
-func GetComments(postID int64) ([]Comment, error) {
+func GetCommentsByPostID(postID int64) ([]Comment, error) {
 	qurey := `SELECT * FROM comments
 	 WHERE (post_id = ?)`
 	rows, err := db.DB.Query(qurey, postID)
