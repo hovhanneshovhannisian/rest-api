@@ -84,4 +84,52 @@ func createTabel() {
 	if err != nil {
 		panic("couldn't create comments table")
 	}
+
+	// chatrooms table
+	createChatRoomsTable := `
+	CREATE TABLE IF NOT EXISTS chatrooms (
+		room_id INT PRIMARY KEY AUTO_INCREMENT,
+		name VARCHAR(45) NOT NULL,
+		type ENUM('direct', 'group') NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	)`
+	_, err = DB.Exec(createChatRoomsTable)
+	if err != nil {
+		panic("couldn't create chatrooms table")
+	}
+
+	// chatmembers table
+	createChatMembersTable := `
+	CREATE TABLE IF NOT EXISTS chatmembers (
+		id INT PRIMARY KEY AUTO_INCREMENT,
+		room_id INT NOT NULL,
+		user_id INT NOT NULL,
+		joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+		FOREIGN KEY (room_id) REFERENCES chatmembers(room_id),
+		FOREIGN KEY (user_id) REFERENCES users(id)
+	)`
+	_, err = DB.Exec(createChatMembersTable)
+	if err != nil {
+		panic("couldn't create chatmembers table")
+	}
+
+	// messages table
+	createMessagesTable := `
+	CREATE TABLE IF NOT EXISTS messages (
+		id INT PRIMARY KEY AUTO_INCREMENT,
+		message VARCHAR(255) NOT NULL,
+		room_id INT NOT NULL,
+		user_id INT NOT NULL,
+		is_read BOOLEAN DEFAULT false
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+		FOREIGN KEY (room_id) REFERENCES chatmembers(room_id),
+		FOREIGN KEY (user_id) REFERENCES users(id)
+	)`
+	_, err = DB.Exec(createMessagesTable)
+	if err != nil {
+		panic("couldn't create messages table")
+	}
 }

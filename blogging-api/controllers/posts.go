@@ -16,7 +16,7 @@ func CreatePost(ctx *gin.Context) {
 		})
 		return
 	}
-	authorID := ctx.GetInt64("authorID")
+	authorID := ctx.GetInt64("userID")
 	newPost.AuthorID = authorID
 	if err := newPost.Save(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -70,7 +70,7 @@ func UpdatePost(ctx *gin.Context) {
 		})
 		return
 	}
-	authorID := ctx.GetInt64("authorID")
+	authorID := ctx.GetInt64("userID")
 	post, err := models.GetPostByID(cnvtID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
@@ -114,7 +114,7 @@ func DeletePost(ctx *gin.Context) {
 		})
 		return
 	}
-	authorID := ctx.GetInt64("authorID")
+	authorID := ctx.GetInt64("userID")
 	post, err := models.GetPostByID(cnvtID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{

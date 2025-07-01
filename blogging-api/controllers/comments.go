@@ -24,7 +24,7 @@ func CreateComment(ctx *gin.Context) {
 		})
 		return
 	}
-	authorID := ctx.GetInt64("authorID")
+	authorID := ctx.GetInt64("userID")
 
 	var newComment models.Comment
 	if err := ctx.BindJSON(&newComment); err != nil {
@@ -61,7 +61,7 @@ func UpdateComment(ctx *gin.Context) {
 		})
 		return
 	}
-	authorID := ctx.GetInt64("authorID")
+	authorID := ctx.GetInt64("userID")
 	if cmnt.AuthorID != authorID {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized user",
@@ -102,7 +102,7 @@ func DeleteComment(ctx *gin.Context) {
 		})
 		return
 	}
-	authorID := ctx.GetInt64("authorID")
+	authorID := ctx.GetInt64("userID")
 	if cmnt.AuthorID != authorID {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized user",
