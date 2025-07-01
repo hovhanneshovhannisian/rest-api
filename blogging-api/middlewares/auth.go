@@ -21,6 +21,6 @@ func Authentication(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Set("authorID", authorID)
+	ctx.Set("userID", authorID)
 	ctx.Next()
 }
