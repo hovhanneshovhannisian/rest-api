@@ -3,6 +3,7 @@ package controllers
 import (
 	"example/blog/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +39,42 @@ func SendMessage(ctx *gin.Context) {
 }
 
 func UpdateMessage(ctx *gin.Context) {
+	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	senderID := ctx.GetInt64("userID")
+	message, err := models.GetMessageByID(cnvtID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
+	if message.SenderID != senderID {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "you can't edit this message",
+		})
+		return
+	}
 
+	var editmessage models.Message
+	if err := ctx.BindJSON(&editmessage); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "missing parameters",
+		})
+		return
+	}
+	editmessage.ID = cnvtID
+	if err := editmessage.Update(); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
 }
 
 func GetMessages(ctx *gin.Context) {

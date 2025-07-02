@@ -35,5 +35,5 @@ func Router(server *gin.Engine) {
 	message.Use(middlewares.Authentication)
 	message.POST("/:username", controllers.SendMessage)
 	message.GET("/:username", controllers.GetMessages)
-	message.PUT("/:id", controllers.UpdateMessage)
+	//message.PUT("/:id", controllers.UpdateMessage)
 }

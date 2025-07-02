@@ -36,6 +36,27 @@ func (m *Message) Save() error {
 	m.ID = id
 	return nil
 }
+
+func (m *Message) Update() error {
+	query := `
+	UPDATE comments
+	SET	message = ?
+	WHERE (id = ?)`
+
+	result, err := db.DB.Exec(query, m.Message, m.ID)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	m.ID = id
+	return nil
+}
+
 func GetChatMessages(s, r int64) ([]Message, error) {
 	query := `
 	SELECT * FROM messages
@@ -57,4 +78,16 @@ func GetChatMessages(s, r int64) ([]Message, error) {
 		messages = append(messages, message)
 	}
 	return messages, nil
+}
+
+func GetMessageByID(id int64) (*Message, error) {
+	query := "SELECT * FROM messages WHERE (id = ?)"
+
+	row := db.DB.QueryRow(query, id)
+	var message Message
+	err := row.Scan(&message.ID, &message.SenderID, &message.ReceiverID, &message.Message, &message.IsRead, &message.CreatedAt, &message.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &message, nil
 }
