@@ -28,4 +28,12 @@ func Router(server *gin.Engine) {
 
 	server.POST("/signup", controllers.SignUp)
 	server.POST("/login", controllers.Login)
+
+	// live chat
+
+	message := server.Group("/message")
+	message.Use(middlewares.Authentication)
+	message.POST("/:username", controllers.SendMessage)
+	message.GET("/:username", controllers.GetMessages)
+	message.PUT("/:id", controllers.UpdateMessage)
 }
