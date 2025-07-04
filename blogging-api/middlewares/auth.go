@@ -13,7 +13,7 @@ func Authentication(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "user is unauthorized"})
 		return
 	}
-	authorID, err := helper.VerifyToken(token)
+	userID, err := helper.VerifyToken(token)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"error": err,
@@ -21,6 +21,6 @@ func Authentication(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Set("userID", authorID)
+	ctx.Set("userID", userID)
 	ctx.Next()
 }

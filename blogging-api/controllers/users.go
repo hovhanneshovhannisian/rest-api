@@ -47,15 +47,21 @@ func Login(ctx *gin.Context) {
 		})
 		return
 	}
-	token, err := helper.GenerateToken(user.Username, user.ID)
+	access_T, refresh_T, err := helper.GenerateToken(user.Username, user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "server error",
 		})
 		return
 	}
+	ctx.SetCookie("refreshtoken", refresh_T,
+		7200,
+		"/",
+		"http://localhost:3000",
+		true,
+		true)
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Logged in!",
-		"token":   token,
+		"message":     "Logged in!",
+		"accesstoken": access_T,
 	})
 }

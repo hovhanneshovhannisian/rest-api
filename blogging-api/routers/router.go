@@ -8,32 +8,41 @@ import (
 )
 
 func Router(server *gin.Engine) {
-	server.GET("/posts", controllers.GetAllPosts)
-	server.GET("/posts/:id", controllers.GetPost)
 
-	authentication := server.Group("/posts")
-	authentication.Use(middlewares.Authentication)
+	apiv1 := server.Group("/api/v1")
+	//signup and login
+	apiv1.POST("/signup", controllers.SignUp)
+	apiv1.POST("/login", controllers.Login)
+	{
+		apiv1.GET("/posts", controllers.GetAllPosts)
+		apiv1.GET("/posts/:id", controllers.GetPost)
 
-	authentication.POST("/", controllers.CreatePost)
-	authentication.PUT("/:id", controllers.UpdatePost)
-	authentication.DELETE("/:id", controllers.DeletePost)
+		posts := apiv1.Group("/posts")
+		{
+			posts.GET("/", controllers.GetAllPosts)
+			posts.GET("/:id", controllers.GetPost)
 
-	authentication.POST("/:id/comment", controllers.CreateComment)
-	authentication.GET("/:id/comment", controllers.GetPostComments)
+			//only authenticated
+			posts.Use(middlewares.Authentication)
 
-	authentication.PUT("/comment/:id", controllers.UpdateComment)
-	authentication.DELETE("/comment/:id", controllers.DeleteComment)
+			posts.POST("/", controllers.CreatePost)
+			posts.PUT("/:id", controllers.UpdatePost)
+			posts.DELETE("/:id", controllers.DeletePost)
 
-	//server.GET("/comments", controllers.ToTestComments)
+			posts.POST("/:id/comment", controllers.CreateComment)
+			posts.GET("/:id/comment", controllers.GetPostComments)
+			posts.PUT("/comment/:id", controllers.UpdateComment)
+			posts.DELETE("/comment/:id", controllers.DeleteComment)
+		}
 
-	server.POST("/signup", controllers.SignUp)
-	server.POST("/login", controllers.Login)
+		// live chat
 
-	// live chat
-
-	message := server.Group("/message")
-	message.Use(middlewares.Authentication)
-	message.POST("/:username", controllers.SendMessage)
-	message.GET("/:username", controllers.GetMessages)
-	//message.PUT("/:id", controllers.UpdateMessage)
+		message := apiv1.Group("/message")
+		message.Use(middlewares.Authentication)
+		{
+			message.POST("/:username", controllers.SendMessage)
+			message.GET("/:username", controllers.GetMessages)
+			message.PUT("/:id", controllers.UpdateMessage)
+		}
+	}
 }

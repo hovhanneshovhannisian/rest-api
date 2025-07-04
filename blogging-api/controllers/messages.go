@@ -75,20 +75,24 @@ func UpdateMessage(ctx *gin.Context) {
 		})
 		return
 	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "message edited!",
+		"data":    editmessage,
+	})
 }
 
 func GetMessages(ctx *gin.Context) {
-	var s_user models.User
-	s_user.Username = ctx.Param("username")
-	if isExist := s_user.IsExist(); !isExist {
+	var r_user models.User
+	r_user.Username = ctx.Param("username")
+	if isExist := r_user.IsExist(); !isExist {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"message": "there is not such user",
+			"message": "there is no such user",
 		})
 		return
 	}
 
-	r_userID := ctx.GetInt64("userID")
-	messages, err := models.GetChatMessages(r_userID, s_user.ID)
+	s_userID := ctx.GetInt64("userID")
+	messages, err := models.GetChatMessages(s_userID, r_user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "error during  chat fetching",
