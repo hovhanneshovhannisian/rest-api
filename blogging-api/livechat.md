@@ -25,4 +25,11 @@ todo implementing messenger
    role: enum either member or admin
    join_at: time
 
-now trying to make simple one that sortes only the messages which contains only the message, sender and receiver ids then will implement the room version db.go file and the models will use in the future after the simple one and websockets implementing
+[now trying to make simple one that sortes only the messages which contains only the message, sender and receiver ids then will implement the room version][DONE] db.go file and the models will use in the future after the simple one and websockets implementing
+
+next steps for learning and implementing
+
+- implementing swagger for visualizing endpoints
+- learn docker and trying to build container for this application
+- swithc from plain queries to ORM
+- implementing websockets for real-time chatting

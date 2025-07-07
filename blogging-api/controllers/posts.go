@@ -8,6 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreatePost godoc
+// @Summary      Create a post
+// @Description  Create a new blog post
+// @Tags         posts
+// @Param        title  body string  true  "Post Title"
+// @Param        content  body string  true  "Post Content"
+// @Param 		 Authorization header string 	true "Access token"
+// @Success      200   {object}  models.Post
+// @Router       /posts [post]
 func CreatePost(ctx *gin.Context) {
 	var newPost models.Post
 	if err := ctx.BindJSON(&newPost); err != nil {
@@ -29,6 +38,12 @@ func CreatePost(ctx *gin.Context) {
 	})
 }
 
+// GetAllPosts godoc
+// @Summary      Get all the posts
+// @Description  Fetching all the post in the platform
+// @Tags         posts
+// @Success      200   {array}  models.Post
+// @Router       /posts [get]
 func GetAllPosts(ctx *gin.Context) {
 	posts, err := models.GetPosts()
 	if err != nil {
@@ -42,6 +57,13 @@ func GetAllPosts(ctx *gin.Context) {
 	})
 }
 
+// GetPost godoc
+// @Summary      Get the post
+// @Description  Fetching the post by post ID
+// @Tags         posts
+// @Param 		 postId path string true "Post ID"
+// @Success      200   {object}  models.Post
+// @Router       /posts/{postId} [get]
 func GetPost(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -62,6 +84,16 @@ func GetPost(ctx *gin.Context) {
 	})
 }
 
+// UpdatePost godoc
+// @Summary      Update the post
+// @Description  Updating the post
+// @Tags         posts
+// @Param 		 postId path string true "Post ID"
+// @Param        title  body string  true  "Post Title"
+// @Param        content  body string  true  "Post Content"
+// @Param 		 Authorization header string 	true "Access token"
+// @Success      200   {object}  models.Post
+// @Router       /posts/{postId} [put]
 func UpdatePost(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -106,6 +138,14 @@ func UpdatePost(ctx *gin.Context) {
 	})
 }
 
+// DeletePost godoc
+// @Summary      Delete the post
+// @Description  Deleting the post
+// @Tags         posts
+// @Param 		 postId path string true "Post ID"
+// @Param 		 Authorization header string true "Access token"
+// @Success      200   {object}  models.Post
+// @Router       /posts/{postId} [delete]
 func DeletePost(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {

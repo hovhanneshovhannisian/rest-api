@@ -1,0 +1,141 @@
+basePath: /api/v1
+definitions:
+  models.Post:
+    properties:
+      authorID:
+        type: integer
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - content
+    - title
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server for a blogging platform. User signup/login
+    and simple chatting feature with RESTapi
+  title: Blogging app
+  version: "1.0"
+paths:
+  /posts:
+    get:
+      description: Fetching all the post in the platform
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Post'
+            type: array
+      summary: Get all the posts
+      tags:
+      - posts
+    post:
+      description: Create a new blog post
+      parameters:
+      - description: Post Title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Post Content
+        in: body
+        name: content
+        required: true
+        schema:
+          type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Create a post
+      tags:
+      - posts
+  /posts/{postId}:
+    delete:
+      description: Deleting the post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Delete the post
+      tags:
+      - posts
+    get:
+      description: Fetching the post by post ID
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Get the post
+      tags:
+      - posts
+    put:
+      description: Updating the post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      - description: Post Title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Post Content
+        in: body
+        name: content
+        required: true
+        schema:
+          type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Update the post
+      tags:
+      - posts
+swagger: "2.0"
