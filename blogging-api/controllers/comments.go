@@ -9,6 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PublishComment godoc
+// @Summary      Write a comment
+// @Description  Commenting the post
+// @Tags         posts
+// @Param 		 postId path string true "Post ID"
+// @Param        comment  body models.Comment  true  "Comment content"
+// @Param 		 Authorization header string 	true "Access token"
+// @Accept 		 json
+// @Produce 	 json
+// @Router       /posts/{postID}/comment [post]
 func CreateComment(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -46,6 +56,16 @@ func CreateComment(ctx *gin.Context) {
 	})
 }
 
+// UpdateComment godoc
+// @Summary      Update the comment
+// @Description  Updating the comment
+// @Tags         posts
+// @Param 		 commentID path string true "Comment ID"
+// @Param        comment  body models.Comment  true  "Comment content"
+// @Param 		 Authorization header string 	true "Access token"
+// @Accept 		 json
+// @Produce 	 json
+// @Router       /comment/{commentID} [put]
 func UpdateComment(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -87,6 +107,14 @@ func UpdateComment(ctx *gin.Context) {
 	})
 }
 
+// DeleteComment godoc
+// @Summary      Delete the comment
+// @Description  Deleting the comment
+// @Tags         posts
+// @Param 		 commentID path string true "Comment ID"
+// @Param 		 Authorization header string 	true "Access token"
+// @Produce 	 json
+// @Router       /comment/{commentID} [delete]
 func DeleteComment(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -121,6 +149,14 @@ func DeleteComment(ctx *gin.Context) {
 	})
 }
 
+// GetPostComments godoc
+// @Summary      Fetching the post comments
+// @Description  Fetching all the comments of the post
+// @Tags         posts
+// @Param 		 postId path string true "Post ID"
+// @Param 		 Authorization header string 	true "Access token"
+// @Produce 	 json
+// @Router       /posts/{postID}/comment [get]
 func GetPostComments(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {

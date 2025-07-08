@@ -8,6 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SendMessage godoc
+// @Summary      Send Message
+// @Description  Sending message to existing user
+// @Tags         messages
+// @Param        username  path string  true  "the reciever user"
+// @Param        message  body models.Message  true  "Message content"
+// @Param 		 Authorization header string 	true "Access token"
+// @Accept 		 json
+// @Produce 	 json
+// @Router       /message/{username} [post]
 func SendMessage(ctx *gin.Context) {
 	var r_user models.User
 	r_user.Username = ctx.Param("username")
@@ -38,6 +48,16 @@ func SendMessage(ctx *gin.Context) {
 	})
 }
 
+// UpdateMessage godoc
+// @Summary      Update Message
+// @Description  Edit wrote message
+// @Tags         messages
+// @Param        messageID  path string  true  "Message ID"
+// @Param        message  body models.Message  true  "Message content"
+// @Param 		 Authorization header string 	true "Access token"
+// @Accept 		 json
+// @Produce 	 json
+// @Router       /message/{messageID} [put]
 func UpdateMessage(ctx *gin.Context) {
 	cnvtID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -81,6 +101,14 @@ func UpdateMessage(ctx *gin.Context) {
 	})
 }
 
+// GetAllMessage godoc
+// @Summary      Get messages
+// @Description  Getting the chat messages
+// @Tags         messages
+// @Param        username  path string  true  "the reciever user"
+// @Param 		 Authorization header string 	true "Access token"
+// @Produce 	 json
+// @Router       /message/{username} [get]
 func GetMessages(ctx *gin.Context) {
 	var r_user models.User
 	r_user.Username = ctx.Param("username")

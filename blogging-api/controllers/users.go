@@ -8,6 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Signup godoc
+// @Summary      Sign-up user
+// @Description  Create a user
+// @Tags         auth
+// @Param        user  body models.User  true  "User info"
+// @Accept json
+// @Router       /signup [post]
 func SignUp(ctx *gin.Context) {
 	var newUser models.User
 	if err := ctx.BindJSON(&newUser); err != nil {
@@ -33,6 +40,13 @@ func SignUp(ctx *gin.Context) {
 	})
 }
 
+// Login godoc
+// @Summary      Login user
+// @Description  User login
+// @Tags         auth
+// @Param        user  body models.User  true  "User Credentials"
+// @Accept json
+// @Router       /login [post]
 func Login(ctx *gin.Context) {
 	var user models.User
 	if err := ctx.BindJSON(&user); err != nil {

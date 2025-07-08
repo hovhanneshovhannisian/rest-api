@@ -1,5 +1,41 @@
 basePath: /api/v1
 definitions:
+  models.Comment:
+    properties:
+      authorID:
+        type: integer
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      postID:
+        type: integer
+      updatedAt:
+        type: string
+    required:
+    - content
+    type: object
+  models.Message:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isRead:
+        type: boolean
+      message:
+        type: string
+      receiverID:
+        type: integer
+      senderID:
+        type: integer
+      updatedAt:
+        type: string
+    required:
+    - message
+    type: object
   models.Post:
     properties:
       authorID:
@@ -18,6 +54,20 @@ definitions:
     - content
     - title
     type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -26,9 +76,149 @@ info:
   title: Blogging app
   version: "1.0"
 paths:
+  /comment/{commentID}:
+    delete:
+      description: Deleting the comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: commentID
+        required: true
+        type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete the comment
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Updating the comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: commentID
+        required: true
+        type: string
+      - description: Comment content
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Comment'
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Update the comment
+      tags:
+      - posts
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: User login
+      parameters:
+      - description: User Credentials
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses: {}
+      summary: Login user
+      tags:
+      - auth
+  /message/{messageID}:
+    put:
+      consumes:
+      - application/json
+      description: Edit wrote message
+      parameters:
+      - description: Message ID
+        in: path
+        name: messageID
+        required: true
+        type: string
+      - description: Message content
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.Message'
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Update Message
+      tags:
+      - messages
+  /message/{username}:
+    get:
+      description: Getting the chat messages
+      parameters:
+      - description: the reciever user
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get messages
+      tags:
+      - messages
+    post:
+      consumes:
+      - application/json
+      description: Sending message to existing user
+      parameters:
+      - description: the reciever user
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Message content
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.Message'
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Send Message
+      tags:
+      - messages
   /posts:
     get:
       description: Fetching all the post in the platform
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
@@ -40,31 +230,76 @@ paths:
       tags:
       - posts
     post:
+      consumes:
+      - application/json
       description: Create a new blog post
       parameters:
-      - description: Post Title
+      - description: Post info
         in: body
-        name: title
+        name: post
         required: true
         schema:
-          type: string
-      - description: Post Content
-        in: body
-        name: content
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Post'
       - description: Access token
         in: header
         name: Authorization
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/models.Post'
       summary: Create a post
+      tags:
+      - posts
+  /posts/{postID}/comment:
+    get:
+      description: Fetching all the comments of the post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Fetching the post comments
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      description: Commenting the post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postId
+        required: true
+        type: string
+      - description: Comment content
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Comment'
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Write a comment
       tags:
       - posts
   /posts/{postId}:
@@ -97,6 +332,8 @@ paths:
         name: postId
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
@@ -106,6 +343,8 @@ paths:
       tags:
       - posts
     put:
+      consumes:
+      - application/json
       description: Updating the post
       parameters:
       - description: Post ID
@@ -113,23 +352,19 @@ paths:
         name: postId
         required: true
         type: string
-      - description: Post Title
+      - description: Post edited
         in: body
-        name: title
+        name: post
         required: true
         schema:
-          type: string
-      - description: Post Content
-        in: body
-        name: content
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Post'
       - description: Access token
         in: header
         name: Authorization
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
@@ -138,4 +373,20 @@ paths:
       summary: Update the post
       tags:
       - posts
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a user
+      parameters:
+      - description: User info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses: {}
+      summary: Sign-up user
+      tags:
+      - auth
 swagger: "2.0"
