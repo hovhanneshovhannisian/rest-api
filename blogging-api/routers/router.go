@@ -14,9 +14,6 @@ func Router(server *gin.Engine) {
 	apiv1.POST("/signup", controllers.SignUp)
 	apiv1.POST("/login", controllers.Login)
 	{
-		apiv1.GET("/posts", controllers.GetAllPosts)
-		apiv1.GET("/posts/:id", controllers.GetPost)
-
 		posts := apiv1.Group("/posts")
 		{
 			posts.GET("/", controllers.GetAllPosts)
